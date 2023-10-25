@@ -12,13 +12,13 @@ import { Fragment, useState } from 'react'
 
 export default function Home() {
 
-  const showModal = useModal()
+  const showModal = useModal().modalOpen
 
   return (
     <Fragment>
     <div className='w-screen h-screen bg-landingColor'>
     <Header inHome={true} />
-    <Presentation pressed={false}/>
+    <Presentation />
     <UnlimitedTimes />
     <ConfirmationModal isOpen={showModal}/>
     </div>

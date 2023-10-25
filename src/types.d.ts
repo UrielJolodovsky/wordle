@@ -6,7 +6,3 @@ export interface ConfirmationModalProps {
 //     title: string;
 //     children: React.ReactNode;
     }
-
-export interface ConfirmationModalState {
-    pressed: boolean;
-}

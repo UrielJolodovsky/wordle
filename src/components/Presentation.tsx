@@ -1,14 +1,16 @@
 'use client'
 import useModal from "@/hooks/useModal";
-import { ConfirmationModalState } from "@/types";
 import { useRouter } from "next/navigation";
 
-const Presentation = ({pressed}: ConfirmationModalState) => {
+const Presentation = () => {
     
     const router = useRouter();
     
+    const setShowModal = useModal().setModalOpen
+
     const GoToGame = () => {
-        router.push('/game')
+        // router.push('/game')
+        setShowModal(true)
     };
     
 
