@@ -10,7 +10,7 @@ const Presentation = () => {
 
 
     return (
-        <div className="flex-col items-center justify-center pt-24">
+        <div className="flex-col items-center justify-center pt-24 h-1/2">
             <div className="text-center text-6xl text-white font-bold italic">
                 <p>
                     Welcome to Uri Jolo's
