@@ -1,3 +1,4 @@
+'use client'
 import ConfirmationModal from "@/components/ConfirmationModal";
 import Header from "@/components/Header";
 
