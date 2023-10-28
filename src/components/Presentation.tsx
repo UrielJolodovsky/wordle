@@ -7,7 +7,7 @@ const Presentation = () => {
     
     const router = useRouter();
     
-    const { goTrue} = useContext(PageContext)
+    const { goTrue } = useContext(PageContext)
 
     const GoToGame = () => goTrue();
 

@@ -12,7 +12,8 @@ const config: Config = {
       white: '#FFFFFF',
       black: '#000000',
       wordle: '#2CCCFE',
-      greenBtn: '#09F320'
+      greenBtn: '#09F320',
+      modalColor: '#D7CDCC'
     },
     extend: {
       backgroundImage: {
