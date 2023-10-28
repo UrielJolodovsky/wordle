@@ -1,20 +1,27 @@
 import { createContext, useContext, useState } from "react";
 
 type PageContextType = {
-    inHome: boolean,
-    setInHome: (inHome: boolean) => void
+    isOpen: boolean,
+    goTrue: () => void
+    goFalse: () => void
 }
 
 export const PageContext = createContext<PageContextType>({
-    inHome: true,
-    setInHome: () => { }
+    isOpen: false,
+    goTrue: () => { },
+    goFalse: () => { }
 })
 
 export const PageProvider = ({ children }: {children: React.ReactNode}) => {
-    const [inHome, setInHome] = useState(true)
+    
+    const [isOpen, setIsOpen] = useState(false)
+
+    const goTrue = () => setIsOpen(true)
+
+    const goFalse = () => setIsOpen(false)
 
     return (
-        <PageContext.Provider value={{inHome, setInHome}}>
+        <PageContext.Provider value={{isOpen, goTrue, goFalse}}>
             {children}
         </PageContext.Provider>
     )

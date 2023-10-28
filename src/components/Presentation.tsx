@@ -1,18 +1,15 @@
 'use client'
-import useModal from "@/hooks/useModal";
+import { PageContext } from "@/context/PageContext";
 import { useRouter } from "next/navigation";
+import { useContext } from "react";
 
 const Presentation = () => {
     
     const router = useRouter();
     
-    const setShowModal = useModal().setModalOpen
+    const { goTrue} = useContext(PageContext)
 
-    const GoToGame = () => {
-        // router.push('/game')
-        setShowModal(true)
-    };
-    
+    const GoToGame = () => goTrue();
 
 
     return (

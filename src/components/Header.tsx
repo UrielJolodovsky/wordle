@@ -10,11 +10,10 @@ type HeaderProps = {
 export default function Header (props: HeaderProps) {
 
     const router = useRouter();
-    // const { inHome, setInHome} = useContext(PageContext)
+    const { isOpen, goTrue, goFalse } = useContext(PageContext)
     const inHome = props.inHome
     const GoToHome = () => {
         router.push('/')
-    
     };
 
     return (
