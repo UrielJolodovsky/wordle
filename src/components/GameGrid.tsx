@@ -22,11 +22,22 @@ export default function GameGrid() {
         }
     }
 
+    const inputChange = (word: string) => {
+        if (word.length > 5) {
+            setInputWord(word.slice(0, 5))
+            console.log(inputWord)
+        }
+        else {
+            setInputWord(word)
+            console.log(inputWord)
+        }
+    }
+
     const words = ["Hola","Miami","Fulbo","Rayos","Goool", ""]
     
     return (
         <div className="grid gap-2 items-center justify-center pt-10">
-            <input type="text" value={inputWord} onKeyDown={handleKeyDown} onChange={(ev: any) => setInputWord(ev.target.value)} className="w-full h-full absolute opacity-0 left-0 top-0 cursor-default"></input>
+            <input type="text" value={inputWord} onKeyDown={handleKeyDown} onChange={(ev: any) => inputChange(ev.target.value)} className="w-full h-full absolute opacity-0 left-0 top-0 cursor-default"></input>
             {Array.isArray(words) ? words.map((word, index) => 
             <div key={index + 1} className="grid grid-cols-5 gap-2 grid-flow-row">
                 <div className="w-20 h-20 flex items-center text-center justify-center rounded-md bg-modalColor">
