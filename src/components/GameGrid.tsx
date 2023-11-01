@@ -1,9 +1,12 @@
-import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 
 export default function GameGrid() {
     
     const [inputWord, setInputWord] = useState("")
+
+    const router = useRouter()
 
     const handleKeyDown = (ev: any) => {
         if(ev.key === "Enter") {
@@ -17,19 +20,23 @@ export default function GameGrid() {
                 setInputWord("")
             }
         }
+        else if(ev.key === "Escape") {
+            router.push('/')
+        }
         else {
             console.log("Not Enter", ev.key)
         }
     }
 
+    useEffect(() => {
+        console.log(inputWord)
+    }, [inputWord])
     const inputChange = (word: string) => {
         if (word.length > 5) {
             setInputWord(word.slice(0, 5))
-            console.log(inputWord)
         }
         else {
             setInputWord(word)
-            console.log(inputWord)
         }
     }
 
@@ -41,19 +48,19 @@ export default function GameGrid() {
             {Array.isArray(words) ? words.map((word, index) => 
             <div key={index + 1} className="grid grid-cols-5 gap-2 grid-flow-row">
                 <div className="w-20 h-20 flex items-center text-center justify-center rounded-md bg-modalColor">
-                    <h3 className="text-[50px] text-black">{word[0]}</h3>
+                    <h3 className="text-[50px] text-black">{word[0] ? word[0].toLocaleUpperCase() : ''}</h3>
                 </div>
                 <div className="w-20 h-20 flex items-center text-center justify-center rounded-md bg-modalColor">
-                    <h3 className="text-[50px] text-black">{word[1]}</h3>
+                    <h3 className="text-[50px] text-black">{word[1] ? word[1].toLocaleUpperCase() : ''}</h3>
                 </div>
                 <div className="w-20 h-20 flex items-center text-center justify-center rounded-md bg-modalColor">
-                    <h3 className="text-[50px] text-black">{word[2]}</h3>
+                    <h3 className="text-[50px] text-black">{word[2] ? word[2].toLocaleUpperCase() : ''}</h3>
                 </div>
                 <div className="w-20 h-20 flex items-center text-center justify-center rounded-md bg-modalColor">
-                    <h3 className="text-[50px] text-black">{word[3]}</h3>
+                    <h3 className="text-[50px] text-black">{word[3] ? word[3].toLocaleUpperCase() : ''}</h3>
                 </div>
                 <div className="w-20 h-20 flex items-center text-center justify-center rounded-md bg-modalColor">
-                    <h3 className="text-[50px] text-black">{word[4]}</h3>
+                    <h3 className="text-[50px] text-black">{word[4] ? word[4].toLocaleUpperCase() : ''}</h3>
                 </div>
             </div>
             ) : ""}

@@ -17,7 +17,7 @@ export default function Header (props: HeaderProps) {
     };
 
     return (
-        <div className="flex flex-direction:row items-center pt-5  h-1/6">
+        <div className="flex flex-direction:row items-center pt-5 h-1/6">
             <div className="basis-3/4 pl-5">
                 <h1 className="text-[92px] italic text-wordle font-bold flex-shrink-0 drop-shadow-[0px_5.777778148651123px_5.777778148651123px_rgba(0, 0, 0, 0.25)] border-3 border-white">WORDLE</h1>
             </div>
