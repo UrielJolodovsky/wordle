@@ -66,20 +66,20 @@ export default function GameGrid() {
             <input type="text" value={inputWord} autoFocus onKeyDown={handleKeyDown} onChange={(ev: any) => inputChange(ev.target.value)} className="w-full h-full absolute opacity-0 left-0 top-0 cursor-default"></input>
             {Array.isArray(words) ? words.map((word, index) => 
             <div key={index + 1} className="grid grid-cols-5 gap-2 grid-flow-row">
-                <div className="w-20 h-20 flex items-center text-center justify-center rounded-md bg-modalColor">
-                    <h3 className="text-[50px] text-black">{word[0] ? word[0].toLocaleUpperCase() : ''}</h3>
+                <div className="w-20 h-20 flex items-center text-center justify-center rounded-md border-2 border-modalColor">
+                    <h3 className="text-[50px] text-modalColor">{word[0] ? word[0].toLocaleUpperCase() : ''}</h3>
                 </div>
-                <div className="w-20 h-20 flex items-center text-center justify-center rounded-md bg-modalColor">
-                    <h3 className="text-[50px] text-black">{word[1] ? word[1].toLocaleUpperCase() : ''}</h3>
+                <div className="w-20 h-20 flex items-center text-center justify-center rounded-md border-2 border-modalColor">
+                    <h3 className="text-[50px] text-modalColor">{word[1] ? word[1].toLocaleUpperCase() : ''}</h3>
                 </div>
-                <div className="w-20 h-20 flex items-center text-center justify-center rounded-md bg-modalColor">
-                    <h3 className="text-[50px] text-black">{word[2] ? word[2].toLocaleUpperCase() : ''}</h3>
+                <div className="w-20 h-20 flex items-center text-center justify-center rounded-md border-2 border-modalColor">
+                    <h3 className="text-[50px] text-modalColor">{word[2] ? word[2].toLocaleUpperCase() : ''}</h3>
                 </div>
-                <div className="w-20 h-20 flex items-center text-center justify-center rounded-md bg-modalColor">
-                    <h3 className="text-[50px] text-black">{word[3] ? word[3].toLocaleUpperCase() : ''}</h3>
+                <div className="w-20 h-20 flex items-center text-center justify-center rounded-md border-2 border-modalColor">
+                    <h3 className="text-[50px] text-modalColor">{word[3] ? word[3].toLocaleUpperCase() : ''}</h3>
                 </div>
-                <div className="w-20 h-20 flex items-center text-center justify-center rounded-md bg-modalColor">
-                    <h3 className="text-[50px] text-black">{word[4] ? word[4].toLocaleUpperCase() : ''}</h3>
+                <div className="w-20 h-20 flex items-center text-center justify-center rounded-md border-2 border-modalColor">
+                    <h3 className="text-[50px] text-modalColor">{word[4] ? word[4].toLocaleUpperCase() : ''}</h3>
                 </div>
             </div>
             ) : ""}
