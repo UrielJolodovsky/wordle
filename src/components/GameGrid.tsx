@@ -18,9 +18,12 @@ export default function GameGrid() {
         if(ev.key === "Enter") {
             console.log("Enter")
             console.log(inputWord)
-            if (inputWord.length === 5) {
+            if (inputWord.length === 5 && numberWord < 5) {
                 setInputWord("")
                 setNumberWord(numberWord + 1)
+            }
+            else if(numberWord === 5) {
+                router.push('/')
             }
             else {
                 alert("The word must have 5 letters")
@@ -56,14 +59,10 @@ export default function GameGrid() {
             setInputWord(word)
         }
     }
-    useEffect(() => {
-        if (numberWord === 6) {
-            router.push('/')
-        }
-    }, [numberWord])
+
     return (
         <div className="grid gap-2 items-center justify-center pt-10 pb-5">
-            <input type="text" value={inputWord} autoFocus onKeyDown={handleKeyDown} onChange={(ev: any) => inputChange(ev.target.value)} className="w-full h-full absolute opacity-0 left-0 top-0 cursor-default"></input>
+            <input  type="text" value={inputWord} autoFocus onKeyDown={handleKeyDown} onChange={(ev: any) => inputChange(ev.target.value)} className="w-full h-full absolute opacity-0 left-0 top-0 cursor-default"></input>
             {Array.isArray(words) ? words.map((word, index) => 
             <div key={index + 1} className="grid grid-cols-5 gap-2 grid-flow-row">
                 <div className="w-20 h-20 flex items-center text-center justify-center rounded-md border-2 border-modalColor">
