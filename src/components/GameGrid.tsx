@@ -1,7 +1,6 @@
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
-
 export default function GameGrid() {
     
     const [inputWord, setInputWord] = useState("")
@@ -22,7 +21,7 @@ export default function GameGrid() {
                 setInputWord("")
                 setNumberWord(numberWord + 1)
             }
-            else if(numberWord === 5) {
+            else if(inputWord.length === 5 && numberWord === 5) {
                 router.push('/')
             }
             else {

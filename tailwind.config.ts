@@ -13,6 +13,7 @@ const config: Config = {
       black: '#000000',
       wordle: '#2CCCFE',
       greenBtn: '#09F320',
+      greenBtn2: '#4ECB71',
       modalColor: '#D7CDCC'
     },
     extend: {
