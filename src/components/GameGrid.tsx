@@ -1,13 +1,24 @@
+import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
 export default function GameGrid() {
+
+    const [word, setWord] = useState("AUDIO")
     
     const [inputWord, setInputWord] = useState("")
 
     const [numberWord, setNumberWord] = useState(0)
 
     const [words, setWords] = useState(["","","","","",""])
+
+    const classname_div_grid = "w-20 h-20 flex items-center text-center justify-center rounded-md border-2 border-modalColor"
+
+    const Conditions = () => {
+        return {
+            "": numberWord == 0
+        }
+    }
 
     const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K","L","M","N","Ñ","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
 
@@ -64,19 +75,19 @@ export default function GameGrid() {
             <input  type="text" value={inputWord} autoFocus onKeyDown={handleKeyDown} onChange={(ev: any) => inputChange(ev.target.value)} className="w-full h-full absolute opacity-0 left-0 top-0 cursor-default"></input>
             {Array.isArray(words) ? words.map((word, index) => 
             <div key={index + 1} className="grid grid-cols-5 gap-2 grid-flow-row">
-                <div className="w-20 h-20 flex items-center text-center justify-center rounded-md border-2 border-modalColor">
+                <div className={cn(classname_div_grid, Conditions)}>
                     <h3 className="text-[50px] text-modalColor">{word[0] ? word[0].toLocaleUpperCase() : ''}</h3>
                 </div>
-                <div className="w-20 h-20 flex items-center text-center justify-center rounded-md border-2 border-modalColor">
+                <div className={cn(classname_div_grid, Conditions)}>
                     <h3 className="text-[50px] text-modalColor">{word[1] ? word[1].toLocaleUpperCase() : ''}</h3>
                 </div>
-                <div className="w-20 h-20 flex items-center text-center justify-center rounded-md border-2 border-modalColor">
+                <div className={cn(classname_div_grid, Conditions)}>
                     <h3 className="text-[50px] text-modalColor">{word[2] ? word[2].toLocaleUpperCase() : ''}</h3>
                 </div>
-                <div className="w-20 h-20 flex items-center text-center justify-center rounded-md border-2 border-modalColor">
+                <div className={cn(classname_div_grid, Conditions)}>
                     <h3 className="text-[50px] text-modalColor">{word[3] ? word[3].toLocaleUpperCase() : ''}</h3>
                 </div>
-                <div className="w-20 h-20 flex items-center text-center justify-center rounded-md border-2 border-modalColor">
+                <div className={cn(classname_div_grid, Conditions)}>
                     <h3 className="text-[50px] text-modalColor">{word[4] ? word[4].toLocaleUpperCase() : ''}</h3>
                 </div>
             </div>
