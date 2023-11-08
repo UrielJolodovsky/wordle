@@ -14,14 +14,14 @@ export default function Home() {
 
   return (
     <PageProvider>
-    <Fragment>
+    {/* <Fragment> */}
     <div className='w-screen h-screen bg-landingColor'>
     <Header inHome={true} />
     <Presentation />
     <UnlimitedTimes />
     <ConfirmationModal />
     </div>
-    </Fragment>
+    {/* </Fragment> */}
     </PageProvider>
   )
 }

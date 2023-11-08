@@ -9,11 +9,11 @@ const Presentation = () => {
     
     const { goTrue } = useContext(PageContext)
 
-    const GoToGame = () => goTrue();
+    const GoModal = () => goTrue();
 
 
     return (
-        <div className="flex-col items-center justify-center pt-24 h-1/2">
+        <div className="flex-col items-center justify-center pt-16 h-1/2">
             <div className="text-center text-6xl text-white font-bold italic">
                 <p>
                     Welcome to Uri Jolo's
@@ -22,8 +22,8 @@ const Presentation = () => {
                     Wordle Game
                 </p>
             </div>
-            <div className="justify-center items-center text-center pt-20">
-                <button className="bg-greenBtn px-[50px] py-2.5 rounded-[15px] text-[90px] text-zinc-800 font-black shadow hover:scale-105" onClick={GoToGame}>
+            <div className="justify-center items-center text-center pt-14">
+                <button className="bg-greenBtn px-[40px] py-2.5 rounded-[15px] text-[55px] text-zinc-800 font-black shadow hover:scale-105" onClick={GoModal}>
                     PLAY
                 </button>
             </div>
