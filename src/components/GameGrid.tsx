@@ -5,10 +5,14 @@ import { useEffect, useState } from "react"
 export default function GameGrid() {
 
     const [word, setWord] = useState("AUDIO")
+
+    const [compareWord, setCompareWord] = useState(word)
     
     const [inputWord, setInputWord] = useState("")
 
     const [numberWord, setNumberWord] = useState(0)
+
+    const [corrects, setCorrects] = useState([[-1, -1 , -1, -1, -1], [-1, -1 , -1, -1, -1], [-1, -1 , -1, -1, -1], [-1, -1 , -1, -1, -1], [-1, -1 , -1, -1, -1], [-1, -1 , -1, -1, -1]])
 
     const [words, setWords] = useState(["","","","","",""])
 
@@ -31,10 +35,42 @@ export default function GameGrid() {
             console.log("Enter")
             console.log(inputWord)
             if (inputWord.length === 5 && numberWord < 5) {
+                // Comparar palabras
+                for(let i = 0; i < inputWord.length; i++) {
+                    if(inputWord[i].toLocaleUpperCase() === compareWord[i].toLocaleUpperCase()) {
+                        console.log("Correcto")
+                        const newCorrects = [...corrects]
+                        newCorrects[numberWord][i] = 0
+                        setCorrects(newCorrects)
+                        const newInputWord = Array.from(inputWord)
+                        newInputWord[i] = ","
+                        const theInputWord = newInputWord.join('')
+                        setInputWord(theInputWord)
+                    }
+                }
+                for (let i = 0; i < inputWord.length; i++) {
+                    if(compareWord.includes(inputWord[i].toLocaleUpperCase())) {
+                        console.log("Casi")
+                        const newCorrects = [...corrects]
+                        newCorrects[numberWord][i] = 1
+                        setCorrects(newCorrects)
+                        inputWord.replace(inputWord[i], "1")
+                        compareWord.replace(compareWord[i], "1")
+                    }
+                }
+                for(let i = 0; i < inputWord.length; i++) {
+                    if(corrects[numberWord][i] === -1) {
+                        const newCorrects = [...corrects]
+                        newCorrects[numberWord][i] = 2
+                        setCorrects(newCorrects)
+                    }
+                }
+                setCompareWord(word)
                 setInputWord("")
                 setNumberWord(numberWord + 1)
             }
             else if(inputWord.length === 5 && numberWord === 5) {
+                // Comparar palabras y decirle la respuesta correcta en caso de no acertar
                 router.push('/')
             }
             else {
@@ -42,7 +78,7 @@ export default function GameGrid() {
                 setInputWord("")
             }
         }
-        else if(ev.key === "Escape") {
+            else if(ev.key === "Escape") {
             router.push('/')
         }
         else {
@@ -78,22 +114,22 @@ export default function GameGrid() {
             {Array.isArray(words) ? words.map((word, index) => 
             <div key={index + 1} className="grid grid-cols-5 gap-2 grid-flow-row">
                 <div className="">
-                    <div className={cn(classname_div_grid, Conditions(0))}>
+                    <div className={cn(classname_div_grid, Conditions(corrects[index][0]))}>
                     <h3 className="text-[50px]">{word[0] ? word[0].toLocaleUpperCase() : ''}</h3>
                     </div>
                 </div>
-                <div className={cn(classname_div_grid, Conditions(1))}>
+                <div className={cn(classname_div_grid, Conditions(corrects[index][1]))}>
                     <h3 className="text-[50px]">{word[1] ? word[1].toLocaleUpperCase() : ''}</h3>
                 </div>
-                <div className={cn(classname_div_grid, Conditions(2))}>
+                <div className={cn(classname_div_grid, Conditions(corrects[index][2]))}>
                     <h3 className="text-[50px]">{word[2] ? word[2].toLocaleUpperCase() : ''}</h3>
                 </div>
-                <div className={cn(classname_div_grid, Conditions)}>
-                    <h3 className="text-[50px] text-modalColor">{word[3] ? word[3].toLocaleUpperCase() : ''}</h3>
+                <div className={cn(classname_div_grid, Conditions(corrects[index][3]))}>
+                    <h3 className="text-[50px]">{word[3] ? word[3].toLocaleUpperCase() : ''}</h3>
                 </div>
                 {/* <div className="animate-tilt shadow-white -inset-0.5 opacity-50"> */}
-                <div className="w-20 h-20 flex items-center text-center justify-center rounded-md border-2 border-modalColor text-modalColor">
-                    <h3 className="text-[50px] text-modalColor">{word[4] ? word[4].toLocaleUpperCase() : ''}</h3>
+                <div className={cn(classname_div_grid, Conditions(corrects[index][4]))}>
+                    <h3 className="text-[50px]">{word[4] ? word[4].toLocaleUpperCase() : ''}</h3>
                 </div>
                 {/* </div> */}
             </div>
