@@ -6,9 +6,11 @@ export default function GameGrid() {
 
     const [word, setWord] = useState("AUDIO")
 
-    const [compareWord, setCompareWord] = useState(word)
+    const [compareWord, setCompareWord] = useState(Array.from(word))
     
     const [inputWord, setInputWord] = useState("")
+
+    const [compareInput, setCompareInput] = useState(Array.from(inputWord))
 
     const [numberWord, setNumberWord] = useState(0)
 
@@ -32,30 +34,30 @@ export default function GameGrid() {
 
     const handleKeyDown = (ev: any) => {
         if(ev.key === "Enter") {
-            console.log("Enter")
             console.log(inputWord)
             if (inputWord.length === 5 && numberWord < 5) {
                 // Comparar palabras
                 for(let i = 0; i < inputWord.length; i++) {
-                    if(inputWord[i].toLocaleUpperCase() === compareWord[i].toLocaleUpperCase()) {
-                        console.log("Correcto")
+                    if(compareInput[i].toLocaleUpperCase() === compareWord[i].toLocaleUpperCase()) {
                         const newCorrects = [...corrects]
                         newCorrects[numberWord][i] = 0
                         setCorrects(newCorrects)
-                        const newInputWord = Array.from(inputWord)
-                        newInputWord[i] = ","
-                        const theInputWord = newInputWord.join('')
-                        setInputWord(theInputWord)
+                        const newCompareInput = Array.from(compareInput)
+                        newCompareInput[i] = ","
+                        setCompareInput(newCompareInput)
+                        const newCompareWord = Array.from(compareWord)
+                        newCompareWord[i] = ";"
+                        setCompareWord(newCompareWord)
                     }
                 }
                 for (let i = 0; i < inputWord.length; i++) {
-                    if(compareWord.includes(inputWord[i].toLocaleUpperCase())) {
-                        console.log("Casi")
+                    if(compareWord.includes(compareInput[i].toLocaleUpperCase())) {
                         const newCorrects = [...corrects]
                         newCorrects[numberWord][i] = 1
                         setCorrects(newCorrects)
-                        inputWord.replace(inputWord[i], "1")
-                        compareWord.replace(compareWord[i], "1")
+                        const newCompareInput = Array.from(compareInput)
+                        newCompareInput[i] = ","
+                        setCompareInput(newCompareInput)
                     }
                 }
                 for(let i = 0; i < inputWord.length; i++) {
@@ -65,7 +67,7 @@ export default function GameGrid() {
                         setCorrects(newCorrects)
                     }
                 }
-                setCompareWord(word)
+                setCompareWord(Array.from(word))
                 setInputWord("")
                 setNumberWord(numberWord + 1)
             }
@@ -81,9 +83,6 @@ export default function GameGrid() {
             else if(ev.key === "Escape") {
             router.push('/')
         }
-        else {
-            console.log("Not Enter", ev.key)
-        }
     }
 
     useEffect(() => {
@@ -92,6 +91,7 @@ export default function GameGrid() {
         const newWords = [...words]
         newWords[numberWord] = inputWord
         setWords(newWords)
+        setCompareInput(Array.from(inputWord))
     }, [inputWord])
     
     const inputChange = (word: string) => {
