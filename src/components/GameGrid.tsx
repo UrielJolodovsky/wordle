@@ -32,48 +32,57 @@ export default function GameGrid() {
 
     const router = useRouter()
 
+    const verifyWord = () => {
+        for(let i = 0; i < inputWord.length; i++) {
+            if(compareInput[i].toLocaleUpperCase() === compareWord[i].toLocaleUpperCase()) {
+                const newCorrects = [...corrects]
+                newCorrects[numberWord][i] = 0
+                setCorrects(newCorrects)
+                // const newCompareInput = Array.from(compareInput)
+                // newCompareInput[i] = ","
+                // setCompareInput(newCompareInput)
+                // const newCompareWord = Array.from(compareWord)
+                // newCompareWord[i] = ";"
+                // setCompareWord(newCompareWord)
+                const newWord = [... compareWord]
+                newWord[i] = "-"
+                setCompareWord(newWord)
+                console.log(compareWord)
+            }
+        }
+        for (let i = 0; i < inputWord.length; i++) {
+            if(compareWord.includes(compareInput[i].toLocaleUpperCase())) {
+                const newCorrects = [...corrects]
+                newCorrects[numberWord][i] = 1
+                setCorrects(newCorrects)
+                const newCompareInput = Array.from(compareInput)
+                newCompareInput[i] = ","
+                setCompareInput(newCompareInput)
+            }
+        }
+        for(let i = 0; i < inputWord.length; i++) {
+            if(corrects[numberWord][i] === -1) {
+                const newCorrects = [...corrects]
+                newCorrects[numberWord][i] = 2
+                setCorrects(newCorrects)
+            }
+        }
+        setCompareWord(Array.from(word))
+        setInputWord("")
+        setNumberWord(numberWord + 1)
+    }
+    
     const handleKeyDown = (ev: any) => {
         if(ev.key === "Enter") {
             console.log(inputWord)
             if (inputWord.length === 5 && numberWord < 5) {
                 // Comparar palabras
-                for(let i = 0; i < inputWord.length; i++) {
-                    if(compareInput[i].toLocaleUpperCase() === compareWord[i].toLocaleUpperCase()) {
-                        const newCorrects = [...corrects]
-                        newCorrects[numberWord][i] = 0
-                        setCorrects(newCorrects)
-                        const newCompareInput = Array.from(compareInput)
-                        newCompareInput[i] = ","
-                        setCompareInput(newCompareInput)
-                        const newCompareWord = Array.from(compareWord)
-                        newCompareWord[i] = ";"
-                        setCompareWord(newCompareWord)
-                    }
-                }
-                for (let i = 0; i < inputWord.length; i++) {
-                    if(compareWord.includes(compareInput[i].toLocaleUpperCase())) {
-                        const newCorrects = [...corrects]
-                        newCorrects[numberWord][i] = 1
-                        setCorrects(newCorrects)
-                        const newCompareInput = Array.from(compareInput)
-                        newCompareInput[i] = ","
-                        setCompareInput(newCompareInput)
-                    }
-                }
-                for(let i = 0; i < inputWord.length; i++) {
-                    if(corrects[numberWord][i] === -1) {
-                        const newCorrects = [...corrects]
-                        newCorrects[numberWord][i] = 2
-                        setCorrects(newCorrects)
-                    }
-                }
-                setCompareWord(Array.from(word))
-                setInputWord("")
-                setNumberWord(numberWord + 1)
+                verifyWord()
             }
             else if(inputWord.length === 5 && numberWord === 5) {
                 // Comparar palabras y decirle la respuesta correcta en caso de no acertar
-                router.push('/')
+                // router.push('/')
+                verifyWord()
             }
             else {
                 alert("The word must have 5 letters")
