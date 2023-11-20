@@ -7,6 +7,10 @@ export default function GameGrid() {
     const [word, setWord] = useState("AUDIO")
 
     const [compareWord, setCompareWord] = useState(Array.from(word))
+
+    const dic = {
+        1: "hola"
+    }
     
     const [inputWord, setInputWord] = useState("")
 
@@ -44,7 +48,7 @@ export default function GameGrid() {
                 // const newCompareWord = Array.from(compareWord)
                 // newCompareWord[i] = ";"
                 // setCompareWord(newCompareWord)
-                const newWord = [... compareWord]
+                const newWord =[... compareWord]
                 newWord[i] = "-"
                 setCompareWord(newWord)
                 console.log(compareWord)
@@ -74,7 +78,6 @@ export default function GameGrid() {
     
     const handleKeyDown = (ev: any) => {
         if(ev.key === "Enter") {
-            console.log(inputWord)
             if (inputWord.length === 5 && numberWord < 5) {
                 // Comparar palabras
                 verifyWord()
