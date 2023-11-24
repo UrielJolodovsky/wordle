@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 
 export default function GameGrid() {
 
-    const [word, setWord] = useState("AUDIO")
+    const [word, setWord] = useState("WHENS")
 
     let compareWord = Array.from(word)
 
@@ -22,7 +22,7 @@ export default function GameGrid() {
 
     const [words, setWords] = useState(["","","","","",""])
 
-    const classname_div_grid = "w-20 h-20 flex items-center text-center justify-center rounded-md border-2 border-modalColor text-modalColor"
+    const classname_div_grid = "w-20 h-20 lg:w-16 lg:h-16 flex items-center text-center justify-center rounded-md border-2 border-modalColor text-modalColor"
 
     const Conditions = (input: number) => {
         return {
@@ -81,6 +81,10 @@ export default function GameGrid() {
     useEffect(() => {
     // useEffect para cuando adivine la palabra
     }, [])
+
+    useEffect(() => {
+        // useEffect para cuando llegue a la ultima palabra
+        }, [numberWord === 6])
     
     const handleKeyDown = (ev: any) => {
         if(ev.key === "Enter") {
@@ -127,27 +131,27 @@ export default function GameGrid() {
     }
 
     return (
-        <div className="grid gap-2 items-center justify-center pt-10 pb-5">
+        <div className="grid gap-2 items-center justify-center pt-10 pb-5 lg:pt-5">
             <input  type="text" value={inputWord} autoFocus onKeyDown={handleKeyDown} onChange={(ev: any) => inputChange(ev.target.value)} className="w-full h-full absolute opacity-0 left-0 top-0 cursor-default"></input>
             {Array.isArray(words) ? words.map((word, index) => 
             <div key={index + 1} className="grid grid-cols-5 gap-2 grid-flow-row">
                 <div className="">
                     <div className={cn(classname_div_grid, Conditions(corrects[index][0]))}>
-                    <h3 className="text-[50px]">{word[0] ? word[0].toLocaleUpperCase() : ''}</h3>
+                    <h3 className="text-[50px] lg:text-[30px]">{word[0] ? word[0].toLocaleUpperCase() : ''}</h3>
                     </div>
                 </div>
                 <div className={cn(classname_div_grid, Conditions(corrects[index][1]))}>
-                    <h3 className="text-[50px]">{word[1] ? word[1].toLocaleUpperCase() : ''}</h3>
+                    <h3 className="text-[50px] lg:text-[30px]">{word[1] ? word[1].toLocaleUpperCase() : ''}</h3>
                 </div>
                 <div className={cn(classname_div_grid, Conditions(corrects[index][2]))}>
-                    <h3 className="text-[50px]">{word[2] ? word[2].toLocaleUpperCase() : ''}</h3>
+                    <h3 className="text-[50px] lg:text-[30px]">{word[2] ? word[2].toLocaleUpperCase() : ''}</h3>
                 </div>
                 <div className={cn(classname_div_grid, Conditions(corrects[index][3]))}>
-                    <h3 className="text-[50px]">{word[3] ? word[3].toLocaleUpperCase() : ''}</h3>
+                    <h3 className="text-[50px] lg:text-[30px]">{word[3] ? word[3].toLocaleUpperCase() : ''}</h3>
                 </div>
                 {/* <div className="animate-tilt shadow-white -inset-0.5 opacity-50"> */}
                 <div className={cn(classname_div_grid, Conditions(corrects[index][4]))}>
-                    <h3 className="text-[50px]">{word[4] ? word[4].toLocaleUpperCase() : ''}</h3>
+                    <h3 className="text-[50px] lg:text-[30px]">{word[4] ? word[4].toLocaleUpperCase() : ''}</h3>
                 </div>
                 {/* </div> */}
             </div>
