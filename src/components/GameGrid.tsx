@@ -6,7 +6,7 @@ export default function GameGrid() {
 
     const [word, setWord] = useState("AUDIO")
 
-    const [compareWord, setCompareWord] = useState(Array.from(word))
+    let compareWord = Array.from(word)
 
     const dic = {
         1: "hola"
@@ -48,9 +48,9 @@ export default function GameGrid() {
                 // const newCompareWord = Array.from(compareWord)
                 // newCompareWord[i] = ";"
                 // setCompareWord(newCompareWord)
-                const newWord =[... compareWord]
-                newWord[i] = "-"
-                setCompareWord(newWord)
+                const newCompareWord = [...compareWord]
+                newCompareWord[i] = ","
+                compareWord = newCompareWord
                 console.log(compareWord)
             }
         }
@@ -59,9 +59,11 @@ export default function GameGrid() {
                 const newCorrects = [...corrects]
                 newCorrects[numberWord][i] = 1
                 setCorrects(newCorrects)
-                const newCompareInput = Array.from(compareInput)
-                newCompareInput[i] = ","
-                setCompareInput(newCompareInput)
+                let position = compareWord.indexOf(compareInput[i].toLocaleUpperCase())
+                // const newCompareInput = Array.from(compareInput)
+                // newCompareInput[i] = ","
+                // setCompareInput(newCompareInput)
+                compareWord[position] = ","
             }
         }
         for(let i = 0; i < inputWord.length; i++) {
@@ -71,10 +73,14 @@ export default function GameGrid() {
                 setCorrects(newCorrects)
             }
         }
-        setCompareWord(Array.from(word))
+        
+        compareWord = Array.from(word)
         setInputWord("")
         setNumberWord(numberWord + 1)
     }
+    useEffect(() => {
+    // useEffect para cuando adivine la palabra
+    }, [])
     
     const handleKeyDown = (ev: any) => {
         if(ev.key === "Enter") {
