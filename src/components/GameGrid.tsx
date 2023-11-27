@@ -22,7 +22,7 @@ export default function GameGrid() {
 
     const [words, setWords] = useState(["","","","","",""])
 
-    const classname_div_grid = "2xl:w-20 2xl:h-20 sm:w-14 sm:h-14 lg:w-16 lg:h-16 flex items-center text-center justify-center rounded-md border-2 border-modalColor text-modalColor"
+    const classname_div_grid = "2xl:w-20 2xl:h-20 w-14 h-14 lg:w-16 lg:h-16 flex items-center text-center justify-center rounded-md border-2 border-modalColor text-modalColor"
 
     const Conditions = (input: number) => {
         return {
@@ -73,17 +73,17 @@ export default function GameGrid() {
                 setCorrects(newCorrects)
             }
         }
-        
-        compareWord = Array.from(word)
-        setInputWord("")
-        setNumberWord(numberWord + 1)
+            compareWord = Array.from(word)
+            setInputWord("")
+            // if (numberWord < 5) setNumberWord(numberWord + 1)
+            setNumberWord(numberWord + 1) 
     }
     useEffect(() => {
     // useEffect para cuando adivine la palabra
     }, [])
 
     useEffect(() => {
-        // useEffect para cuando llegue a la ultima palabra
+        // you lose with timer 2 seconds
         }, [numberWord === 6])
     
     const handleKeyDown = (ev: any) => {
@@ -96,8 +96,9 @@ export default function GameGrid() {
                 // Comparar palabras y decirle la respuesta correcta en caso de no acertar
                 // router.push('/')
                 verifyWord()
+                console.log(word)
             }
-            else {
+            else if (numberWord < 6){
                 alert("The word must have 5 letters")
                 setInputWord("")
             }
@@ -108,12 +109,14 @@ export default function GameGrid() {
     }
 
     useEffect(() => {
+        if (numberWord < 6) {
         const findWord = words.find(word => words[numberWord] === word)
         console.log(words.indexOf(findWord!))
         const newWords = [...words]
         newWords[numberWord] = inputWord
         setWords(newWords)
         setCompareInput(Array.from(inputWord))
+        }
     }, [inputWord])
     
     const inputChange = (word: string) => {

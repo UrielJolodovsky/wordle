@@ -14,6 +14,7 @@
     "clsx": "^2.0.0",
     "getmac": "^1.5.0",
     "next": "13.5.4",
+    "papaparse": "^5.4.1",
     "react": "^18",
     "react-dom": "^18",
     "tailwind-merge": "^2.0.0",
