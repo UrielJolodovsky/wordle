@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import Papa from "papaparse"
 
 export default function GameGrid() {
 
@@ -13,14 +14,12 @@ export default function GameGrid() {
     }
     
     const [inputWord, setInputWord] = useState("")
-
     const [compareInput, setCompareInput] = useState(Array.from(inputWord))
-
     const [numberWord, setNumberWord] = useState(0)
-
     const [corrects, setCorrects] = useState([[-1, -1 , -1, -1, -1], [-1, -1 , -1, -1, -1], [-1, -1 , -1, -1, -1], [-1, -1 , -1, -1, -1], [-1, -1 , -1, -1, -1], [-1, -1 , -1, -1, -1]])
-
     const [words, setWords] = useState(["","","","","",""])
+    const [lose, setLose] = useState(false)
+    const [win, setWin] = useState(false)
 
     const classname_div_grid = "2xl:w-20 2xl:h-20 w-14 h-14 lg:w-16 lg:h-16 flex items-center text-center justify-center rounded-md border-2 border-modalColor text-modalColor"
 
@@ -42,12 +41,6 @@ export default function GameGrid() {
                 const newCorrects = [...corrects]
                 newCorrects[numberWord][i] = 0
                 setCorrects(newCorrects)
-                // const newCompareInput = Array.from(compareInput)
-                // newCompareInput[i] = ","
-                // setCompareInput(newCompareInput)
-                // const newCompareWord = Array.from(compareWord)
-                // newCompareWord[i] = ";"
-                // setCompareWord(newCompareWord)
                 const newCompareWord = [...compareWord]
                 newCompareWord[i] = ","
                 compareWord = newCompareWord
@@ -60,9 +53,6 @@ export default function GameGrid() {
                 newCorrects[numberWord][i] = 1
                 setCorrects(newCorrects)
                 let position = compareWord.indexOf(compareInput[i].toLocaleUpperCase())
-                // const newCompareInput = Array.from(compareInput)
-                // newCompareInput[i] = ","
-                // setCompareInput(newCompareInput)
                 compareWord[position] = ","
             }
         }
@@ -75,15 +65,16 @@ export default function GameGrid() {
         }
             compareWord = Array.from(word)
             setInputWord("")
-            // if (numberWord < 5) setNumberWord(numberWord + 1)
             setNumberWord(numberWord + 1) 
     }
     useEffect(() => {
     // useEffect para cuando adivine la palabra
-    }, [])
+    // console.log las palabras del csv en la carpeta lib llamado FreqWords.csv con papaparse
+        
+}, [])
 
     useEffect(() => {
-        // you lose with timer 2 seconds
+        setLose(corrects[5].includes(2) || corrects[5].includes(1))
         }, [numberWord === 6])
     
     const handleKeyDown = (ev: any) => {
@@ -96,7 +87,6 @@ export default function GameGrid() {
                 // Comparar palabras y decirle la respuesta correcta en caso de no acertar
                 // router.push('/')
                 verifyWord()
-                console.log(word)
             }
             else if (numberWord < 6){
                 alert("The word must have 5 letters")
@@ -159,6 +149,9 @@ export default function GameGrid() {
                 {/* </div> */}
             </div>
             ) : ""}
+            {lose ? <div className="flex justify-center items-center">
+                <h5 className="text-white">Answer: {word}</h5>
+            </div>: ""}
         </div>
     
     )

@@ -18,7 +18,7 @@ export default function Home() {
     <div className='w-screen h-screen bg-landingColor'>
     <Header inHome={true} />
     <Presentation />
-    <UnlimitedTimes />
+    {/* <UnlimitedTimes /> */}
     <ConfirmationModal />
     </div>
     {/* </Fragment> */}
