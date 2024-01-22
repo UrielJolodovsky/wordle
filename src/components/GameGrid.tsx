@@ -69,9 +69,11 @@ export default function GameGrid() {
     }
     useEffect(() => {
     // useEffect para cuando adivine la palabra
-    // console.log las palabras del csv en la carpeta lib llamado FreqWords.csv con papaparse
-        
-}, [])
+        if (corrects[numberWord - 1] && corrects[numberWord - 1].every((value) => value === 0)) {
+            setWin(true)
+            setNumberWord(6)
+        }
+}, [numberWord])
 
     useEffect(() => {
         setLose(corrects[5].includes(2) || corrects[5].includes(1))
@@ -85,7 +87,6 @@ export default function GameGrid() {
             }
             else if(inputWord.length === 5 && numberWord === 5) {
                 // Comparar palabras y decirle la respuesta correcta en caso de no acertar
-                // router.push('/')
                 verifyWord()
             }
             else if (numberWord < 6){
@@ -152,6 +153,9 @@ export default function GameGrid() {
             {lose ? <div className="flex justify-center items-center">
                 <h5 className="text-white">Answer: {word}</h5>
             </div>: ""}
+            {win ? <div className="flex justify-center items-center">
+                <h5 className="text-white">You win!</h5>
+                </div>: ""}
         </div>
     
     )
