@@ -8,10 +8,6 @@ export default function GameGrid() {
     const [word, setWord] = useState("WHENS")
 
     let compareWord = Array.from(word)
-
-    const dic = {
-        1: "hola"
-    }
     
     const [inputWord, setInputWord] = useState("")
     const [compareInput, setCompareInput] = useState(Array.from(inputWord))

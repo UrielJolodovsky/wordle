@@ -32,15 +32,6 @@ export default function ConfirmationModal () {
                     <h3 className="text-black">Select language:</h3>
                 </div>
                 <div className="h-1/2 grid grid-cols-2 justify-center items-center gap-10">
-                    {/* <div className="pt-5 flex gap-5"> */}
-                        {/* <div className="bg-[#9b9b9b] rounded-[15px] p-2">
-                        <input type="radio" name="language" id="english" className="mr-2 gap-3"/>
-                        <label htmlFor="english">English</label>
-                        </div>
-                        <div className="bg-[#9b9b9b] rounded-[15px] p-2">
-                        <input type="radio" name="language" id="spanish" className="mr-2 gap-3"/>
-                        <label htmlFor="spanish">Spanish</label>
-                        </div> */}
                         <div className="flex justify-center items-center">
                             <select value={language} onChange={(ev: any) => setLanguage(ev.target.value)} className="hover:ease-in-out px-5 py-3 border-2 rounded-[10px] bg-greenBtn2">
                                 <option value={""} selected>
@@ -57,16 +48,16 @@ export default function ConfirmationModal () {
                     <div className="flex justify-center items-center">
                         <div className="flex bg-[#9b9b9b] px-5 py-3 rounded-[15px]">
                             {language === "Spanish" ? (
-                                <Image src="/spain.png" alt="arrow" width={100} height={100} />
+                                <Image src="/spain.png" className="w-20 h-20" alt="arrow" width={10} height={10} />
                             ) : (
-                                <Image src="/eeuu.png" alt="arrow" width={100} height={100} />
+                                <Image src="/eeuu.png" className="w-20 h-20" alt="arrow" width={10} height={10} />
                             )}
                         </div>
                     </div>
                 </div>
                 </div>
                 <div className="py-5 flex items-center justify-center">
-                   <button className="text-black border-2 bg-greenBtn2 px-10 py-3 rounded-[15px] hover:bg-greenBtn hover:ease-in-out" onClick={GoToPlay}>
+                   <button className="text-black border-2 bg-greenBtn2 px-5 py-2 rounded-full hover:bg-greenBtn hover:ease-in-out" onClick={GoToPlay}>
                     Go to game!
                    </button>
                 </div>
