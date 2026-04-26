@@ -1,236 +1,215 @@
+'use client'
 import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import Papa from "papaparse"
 import Keyboard from "./Keyboard"
 
-const emptyCorrects = () => Array.from({ length: 6 }, () => [-1, -1, -1, -1, -1])
-const emptyWords = () => ["", "", "", "", "", ""]
+type GameStatus = 'playing' | 'win' | 'lose'
+
+const ROWS = 6
+const COLS = 5
+
+const evaluate = (guess: string, target: string): number[] => {
+    const result = Array<number>(COLS).fill(2)
+    const targetArr = target.split('')
+    for (let i = 0; i < COLS; i++) {
+        if (guess[i] === targetArr[i]) {
+            result[i] = 0
+            targetArr[i] = ''
+        }
+    }
+    for (let i = 0; i < COLS; i++) {
+        if (result[i] === 0) continue
+        const idx = targetArr.indexOf(guess[i])
+        if (idx >= 0) {
+            result[i] = 1
+            targetArr[idx] = ''
+        }
+    }
+    return result
+}
+
+const tileFilledClass = (status: number | undefined) => {
+    if (status === 0) return 'bg-[#3CE62D] border-[#3CE62D] text-black'
+    if (status === 1) return 'bg-[#E2E62D] border-[#E2E62D] text-black'
+    if (status === 2) return 'bg-[#3a3a3c] border-[#3a3a3c] text-white'
+    return 'border-modalColor text-white'
+}
 
 export default function GameGrid() {
-
-    const [word, setWord] = useState("")
+    const router = useRouter()
+    const [target, setTarget] = useState('')
     const [wordList, setWordList] = useState<string[]>([])
-
-    let compareWord = Array.from(word)
-
-    const [inputWord, setInputWord] = useState("")
-    const [compareInput, setCompareInput] = useState(Array.from(inputWord))
-    const [numberWord, setNumberWord] = useState(0)
-    const [corrects, setCorrects] = useState<number[][]>(emptyCorrects())
-    const [words, setWords] = useState<string[]>(emptyWords())
-    const [lose, setLose] = useState(false)
-    const [win, setWin] = useState(false)
-    const inputRef = useRef<HTMLInputElement>(null)
+    const [guesses, setGuesses] = useState<string[]>([])
+    const [statuses, setStatuses] = useState<number[][]>([])
+    const [current, setCurrent] = useState('')
+    const [shake, setShake] = useState(false)
+    const [gameStatus, setGameStatus] = useState<GameStatus>('playing')
 
     useEffect(() => {
         fetch('/FreqWords.csv')
-            .then((res) => res.text())
+            .then((r) => r.text())
             .then((csv) => {
                 const parsed = Papa.parse<string[]>(csv, { skipEmptyLines: true })
                 const list = parsed.data
                     .slice(1)
-                    .map((row) => (Array.isArray(row) ? row[0] : row))
-                    .filter((w): w is string => typeof w === 'string' && w.length === 5)
+                    .map((row) => Array.isArray(row) ? row[0] : row)
+                    .filter((w): w is string => typeof w === 'string' && w.length === COLS)
                     .map((w) => w.toUpperCase())
                 setWordList(list)
-                if (list.length > 0) {
-                    setWord(list[Math.floor(Math.random() * list.length)])
-                }
+                setTarget(list[Math.floor(Math.random() * list.length)] ?? 'WHENS')
             })
-            .catch(() => {
-                setWord("WHENS")
-            })
+            .catch(() => setTarget('WHENS'))
     }, [])
 
-    const resetGame = () => {
-        setCorrects(emptyCorrects())
-        setWords(emptyWords())
-        setInputWord("")
-        setCompareInput([])
-        setNumberWord(0)
-        setLose(false)
-        setWin(false)
-        if (wordList.length > 0) {
-            setWord(wordList[Math.floor(Math.random() * wordList.length)])
-        }
-        setTimeout(() => inputRef.current?.focus(), 0)
+    const reset = () => {
+        setGuesses([])
+        setStatuses([])
+        setCurrent('')
+        setGameStatus('playing')
+        if (wordList.length) setTarget(wordList[Math.floor(Math.random() * wordList.length)])
     }
 
-    const classname_div_grid = "2xl:w-20 2xl:h-20 w-14 h-14 lg:w-16 lg:h-16 flex items-center text-center justify-center rounded-md border-2 border-modalColor text-modalColor"
+    const submit = useCallback(() => {
+        if (gameStatus !== 'playing' || !target) return
+        if (current.length !== COLS) {
+            setShake(true)
+            setTimeout(() => setShake(false), 450)
+            return
+        }
+        const status = evaluate(current, target)
+        const newGuesses = [...guesses, current]
+        const newStatuses = [...statuses, status]
+        setGuesses(newGuesses)
+        setStatuses(newStatuses)
+        setCurrent('')
+        if (status.every((s) => s === 0)) setGameStatus('win')
+        else if (newGuesses.length >= ROWS) setGameStatus('lose')
+    }, [current, gameStatus, target, guesses, statuses])
 
-    const Conditions = (input: number) => {
-        return {
-            "text-[#3CE62D] border-[#3CE62D]": input == 0,
-            "text-[#E2E62D] border-[#E2E62D]": input == 1,
-            "text-[#808080] border-[#808080]": input == 2,
-        }
-    }
+    const addLetter = useCallback((letter: string) => {
+        if (gameStatus !== 'playing') return
+        setCurrent((prev) => (prev.length >= COLS ? prev : prev + letter))
+    }, [gameStatus])
 
-    const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K","L","M","N","Ñ","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
-
-    const router = useRouter()
-
-    const verifyWord = () => {
-        for(let i = 0; i < inputWord.length; i++) {
-            if(compareInput[i].toLocaleUpperCase() === compareWord[i].toLocaleUpperCase()) {
-                const newCorrects = [...corrects]
-                newCorrects[numberWord][i] = 0
-                setCorrects(newCorrects)
-                const newCompareWord = [...compareWord]
-                newCompareWord[i] = ","
-                compareWord = newCompareWord
-                console.log(compareWord)
-            }
-        }
-        for (let i = 0; i < inputWord.length; i++) {
-            if(compareWord.includes(compareInput[i].toLocaleUpperCase())) {
-                const newCorrects = [...corrects]
-                newCorrects[numberWord][i] = 1
-                setCorrects(newCorrects)
-                let position = compareWord.indexOf(compareInput[i].toLocaleUpperCase())
-                compareWord[position] = ","
-            }
-        }
-        for(let i = 0; i < inputWord.length; i++) {
-            if(corrects[numberWord][i] === -1) {
-                const newCorrects = [...corrects]
-                newCorrects[numberWord][i] = 2
-                setCorrects(newCorrects)
-            }
-        }
-            compareWord = Array.from(word)
-            setInputWord("")
-            setNumberWord(numberWord + 1) 
-    }
-    useEffect(() => {
-    // useEffect para cuando adivine la palabra
-        if (corrects[numberWord - 1] && corrects[numberWord - 1].every((value) => value === 0)) {
-            setWin(true)
-            setNumberWord(6)
-        }
-}, [numberWord])
+    const backspace = useCallback(() => {
+        if (gameStatus !== 'playing') return
+        setCurrent((prev) => prev.slice(0, -1))
+    }, [gameStatus])
 
     useEffect(() => {
-        setLose(corrects[5].includes(2) || corrects[5].includes(1))
-        }, [numberWord === 6])
-    
-    const submitWord = () => {
-        if (!word || numberWord >= 6) return
-        if (inputWord.length === 5) {
-            verifyWord()
-        } else {
-            alert("The word must have 5 letters")
-            setInputWord("")
+        const handler = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                router.push('/')
+                return
+            }
+            if (e.key === 'Enter') {
+                e.preventDefault()
+                submit()
+                return
+            }
+            if (e.key === 'Backspace') {
+                e.preventDefault()
+                backspace()
+                return
+            }
+            const k = e.key.toUpperCase()
+            if (k.length === 1 && /^[A-ZÑ]$/.test(k)) {
+                addLetter(k)
+            }
         }
-    }
-
-    const handleKeyDown = (ev: any) => {
-        if(ev.key === "Enter") {
-            submitWord()
-        }
-            else if(ev.key === "Escape") {
-            router.push('/')
-        }
-    }
-
-    const onKeyboardLetter = (letter: string) => {
-        if (numberWord >= 6) return
-        setInputWord((prev) => (prev.length >= 5 ? prev : prev + letter))
-        inputRef.current?.focus()
-    }
-
-    const onKeyboardBackspace = () => {
-        if (numberWord >= 6) return
-        setInputWord((prev) => prev.slice(0, -1))
-        inputRef.current?.focus()
-    }
+        window.addEventListener('keydown', handler)
+        return () => window.removeEventListener('keydown', handler)
+    }, [submit, backspace, addLetter, router])
 
     const letterStatus = useMemo(() => {
-        const status: Record<string, number> = {}
-        for (let r = 0; r < numberWord; r++) {
-            const guess = words[r]
-            if (!guess) continue
-            for (let i = 0; i < guess.length; i++) {
-                const letter = guess[i].toLocaleUpperCase()
-                const c = corrects[r][i]
-                if (c < 0) continue
-                const prev = status[letter]
-                if (prev === undefined || c < prev) status[letter] = c
+        const map: Record<string, number> = {}
+        guesses.forEach((g, r) => {
+            for (let i = 0; i < g.length; i++) {
+                const l = g[i]
+                const s = statuses[r][i]
+                if (map[l] === undefined || s < map[l]) map[l] = s
             }
-        }
-        return status
-    }, [words, corrects, numberWord])
+        })
+        return map
+    }, [guesses, statuses])
 
-    useEffect(() => {
-        if (numberWord < 6) {
-        const findWord = words.find(word => words[numberWord] === word)
-        console.log(words.indexOf(findWord!))
-        const newWords = [...words]
-        newWords[numberWord] = inputWord
-        setWords(newWords)
-        setCompareInput(Array.from(inputWord))
-        }
-    }, [inputWord])
-    
-    const inputChange = (word: string) => {
-        for (let i = 0; i < word.length; i++) {
-            if (!letters.includes(word[i].toLocaleUpperCase())) {
-                word = word.replace(word[i], "")
+    const rows = useMemo(() => {
+        const out: { letters: string[]; statuses: (number | undefined)[]; isCurrent: boolean }[] = []
+        for (let r = 0; r < ROWS; r++) {
+            if (r < guesses.length) {
+                out.push({
+                    letters: guesses[r].split(''),
+                    statuses: statuses[r],
+                    isCurrent: false,
+                })
+            } else if (r === guesses.length && gameStatus === 'playing') {
+                out.push({
+                    letters: Array.from({ length: COLS }, (_, i) => current[i] ?? ''),
+                    statuses: Array(COLS).fill(undefined),
+                    isCurrent: true,
+                })
+            } else {
+                out.push({
+                    letters: Array(COLS).fill(''),
+                    statuses: Array(COLS).fill(undefined),
+                    isCurrent: false,
+                })
             }
         }
-        if (word.length > 5) {
-            setInputWord(word.slice(0, 5))
-        }
-        else {
-            setInputWord(word)
-        }
-    }
+        return out
+    }, [guesses, statuses, current, gameStatus])
 
     return (
-        <div className="grid gap-2 items-center justify-center 2xl:pt-10 pb-5 sm:pt-5">
-            <input  ref={inputRef} type="text" value={inputWord} autoFocus onKeyDown={handleKeyDown} onChange={(ev: any) => inputChange(ev.target.value)} className="w-full h-full absolute opacity-0 left-0 top-0 cursor-default"></input>
-            {Array.isArray(words) ? words.map((word, index) => 
-            <div key={index + 1} className="grid grid-cols-5 gap-2 grid-flow-row">
-                <div className="">
-                    <div className={cn(classname_div_grid, Conditions(corrects[index][0]))}>
-                    <h3 className="2xl:text-[50px] xl:text-[40px] sm:text-[30px]">{word[0] ? word[0].toLocaleUpperCase() : ''}</h3>
+        <div className="flex flex-col items-center gap-5 sm:gap-6 px-3 pb-4">
+            <div className="flex flex-col gap-1.5 sm:gap-2">
+                {rows.map((row, r) => (
+                    <div
+                        key={r}
+                        className={cn(
+                            "grid grid-cols-5 gap-1.5 sm:gap-2",
+                            row.isCurrent && shake && "animate-shake"
+                        )}
+                    >
+                        {row.letters.map((letter, i) => (
+                            <div
+                                key={i}
+                                className={cn(
+                                    "w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 flex items-center justify-center rounded-md border-2 font-bold text-2xl sm:text-3xl lg:text-4xl uppercase transition-colors duration-200",
+                                    tileFilledClass(row.statuses[i]),
+                                    letter && row.isCurrent && "border-white animate-pop"
+                                )}
+                            >
+                                {letter}
+                            </div>
+                        ))}
                     </div>
-                </div>
-                <div className={cn(classname_div_grid, Conditions(corrects[index][1]))}>
-                    <h3 className="2xl:text-[50px] xl:text-[40px] sm:text-[30px]">{word[1] ? word[1].toLocaleUpperCase() : ''}</h3>
-                </div>
-                <div className={cn(classname_div_grid, Conditions(corrects[index][2]))}>
-                    <h3 className="2xl:text-[50px] xl:text-[40px] sm:text-[30px]">{word[2] ? word[2].toLocaleUpperCase() : ''}</h3>
-                </div>
-                <div className={cn(classname_div_grid, Conditions(corrects[index][3]))}>
-                    <h3 className="2xl:text-[50px] xl:text-[40px] sm:text-[30px]">{word[3] ? word[3].toLocaleUpperCase() : ''}</h3>
-                </div>
-                {/* <div className="animate-tilt shadow-white -inset-0.5 opacity-50"> */}
-                <div className={cn(classname_div_grid, Conditions(corrects[index][4]))}>
-                    <h3 className="2xl:text-[50px] xl:text-[40px] sm:text-[30px]">{word[4] ? word[4].toLocaleUpperCase() : ''}</h3>
-                </div>
-                {/* </div> */}
+                ))}
             </div>
-            ) : ""}
-            {lose ? <div className="flex flex-col gap-2 justify-center items-center pt-3">
-                <h5 className="text-white text-2xl">You lose! The word was: <span className="font-bold">{word}</span></h5>
-            </div>: ""}
-            {win ? <div className="flex flex-col gap-2 justify-center items-center pt-3">
-                <h5 className="text-white text-2xl">You win!</h5>
-                </div>: ""}
-            {(lose || win) ? <div className="flex justify-center items-center pt-2">
-                <button onClick={resetGame} className="bg-greenBtn px-6 py-2 rounded-[15px] text-2xl text-zinc-800 font-black shadow hover:scale-105">
-                    Play again
-                </button>
-            </div> : ""}
+
+            {gameStatus !== 'playing' && (
+                <div className="flex flex-col items-center gap-3 text-white text-center">
+                    <p className="text-xl sm:text-2xl font-semibold">
+                        {gameStatus === 'win'
+                            ? '🎉 You won!'
+                            : <>You lost. The word was <span className="font-extrabold text-wordle">{target}</span></>}
+                    </p>
+                    <button
+                        onClick={reset}
+                        className="bg-greenBtn px-6 py-2 rounded-xl text-xl text-black font-black shadow hover:scale-105 transition-transform"
+                    >
+                        Play again
+                    </button>
+                </div>
+            )}
+
             <Keyboard
-                onKey={onKeyboardLetter}
-                onEnter={submitWord}
-                onBackspace={onKeyboardBackspace}
+                onKey={addLetter}
+                onEnter={submit}
+                onBackspace={backspace}
                 letterStatus={letterStatus}
             />
         </div>
-
     )
 }

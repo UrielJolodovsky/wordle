@@ -1,68 +1,55 @@
 'use client'
 import { PageContext } from "@/context/PageContext"
-import { ConfirmationModalProps } from "@/types"
-import { useRouter, useSearchParams } from "next/navigation"
-import { useContext, useEffect, useRef, useState } from "react"
+import { useRouter } from "next/navigation"
+import { useContext, useState } from "react"
 import Image from 'next/image'
 
-export default function ConfirmationModal () {
+export default function ConfirmationModal() {
 
     const router = useRouter();
-
     const GoToPlay = () => router.push('/game')
-    
     const { isOpen, goFalse } = useContext(PageContext)
-
-    const [language, setLanguage] = useState("")
+    const [language, setLanguage] = useState("English")
 
     if (!isOpen) return null;
 
-
     return (
-        <>
-        <div className="fixed inset-0 backdrop-blur-sm flex flex-col justify-center items-center">
-            <div className="w-1/2 h-1/2 items-center justify-center bg-modalColor rounded-[15px]">
-                <div className="flex items-end justify-end p-5">
-                <button className='text-black' onClick={goFalse}>
-                    <Image src="/Close-icon.png" alt="close" width={30} height={30} />
-                </button>
+        <div className="fixed inset-0 backdrop-blur-sm bg-black/40 flex items-center justify-center px-4 z-50">
+            <div className="w-full max-w-md bg-modalColor rounded-2xl shadow-xl p-6 sm:p-8 flex flex-col gap-6">
+                <div className="flex items-center justify-between">
+                    <h3 className="text-xl sm:text-2xl text-black font-bold">Select language</h3>
+                    <button onClick={goFalse} aria-label="Close">
+                        <Image src="/Close-icon.png" alt="close" width={28} height={28} />
+                    </button>
                 </div>
-                <div className="h-1/2 flex flex-col">
-                <div className="text-2xl flex justify-start items-start pl-5">
-                    <h3 className="text-black">Select language:</h3>
-                </div>
-                <div className="h-1/2 grid grid-cols-2 justify-center items-center gap-10">
-                        <div className="flex justify-center items-center">
-                            <select value={language} onChange={(ev: any) => setLanguage(ev.target.value)} className="hover:ease-in-out px-5 py-3 border-2 rounded-[10px] bg-greenBtn2">
-                                <option value={""} selected>
-                                    Select a language
-                                </option>
-                                <option value={"Spanish"}>
-                                    Spanish
-                                </option>
-                                <option value={"English"}>
-                                    English
-                                </option>
-                            </select>
-                        </div>
-                    <div className="flex justify-center items-center">
-                        <div className="flex bg-[#9b9b9b] px-5 py-3 rounded-[15px]">
-                            {language === "Spanish" ? (
-                                <Image src="/spain.png" className="w-20 h-20" alt="arrow" width={10} height={10} />
-                            ) : (
-                                <Image src="/eeuu.png" className="w-20 h-20" alt="arrow" width={10} height={10} />
-                            )}
-                        </div>
+
+                <div className="flex items-center gap-4">
+                    <select
+                        value={language}
+                        onChange={(ev) => setLanguage(ev.target.value)}
+                        className="flex-1 px-4 py-3 rounded-lg bg-greenBtn2 border-2 border-transparent focus:outline-none focus:border-greenBtn text-black font-semibold"
+                    >
+                        <option value="English">English</option>
+                        <option value="Spanish">Spanish</option>
+                    </select>
+                    <div className="bg-[#9b9b9b] p-2 rounded-lg shrink-0">
+                        <Image
+                            src={language === "Spanish" ? "/spain.png" : "/eeuu.png"}
+                            alt={language}
+                            width={56}
+                            height={56}
+                            className="w-14 h-14 object-cover rounded"
+                        />
                     </div>
                 </div>
-                </div>
-                <div className="py-5 flex items-center justify-center">
-                   <button className="text-black border-2 bg-greenBtn2 px-5 py-2 rounded-full hover:bg-greenBtn hover:ease-in-out" onClick={GoToPlay}>
+
+                <button
+                    onClick={GoToPlay}
+                    className="bg-greenBtn px-6 py-3 rounded-xl text-lg text-black font-extrabold shadow hover:scale-[1.02] transition-transform"
+                >
                     Go to game!
-                   </button>
-                </div>
+                </button>
             </div>
         </div>
-       </>
     )
 }

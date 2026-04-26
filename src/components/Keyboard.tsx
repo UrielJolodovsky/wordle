@@ -14,10 +14,10 @@ const ROWS = [
 ]
 
 const statusClass = (s: number | undefined) => {
-    if (s === 0) return "bg-[#3CE62D] text-zinc-900 border-[#3CE62D]"
-    if (s === 1) return "bg-[#E2E62D] text-zinc-900 border-[#E2E62D]"
-    if (s === 2) return "bg-[#808080] text-white border-[#808080]"
-    return "bg-modalColor text-zinc-900 border-modalColor"
+    if (s === 0) return "bg-[#3CE62D] text-black border-[#3CE62D]"
+    if (s === 1) return "bg-[#E2E62D] text-black border-[#E2E62D]"
+    if (s === 2) return "bg-[#3a3a3c] text-white border-[#3a3a3c]"
+    return "bg-[#818384] text-white border-[#818384]"
 }
 
 export default function Keyboard({ onKey, onEnter, onBackspace, letterStatus }: KeyboardProps) {
@@ -28,19 +28,22 @@ export default function Keyboard({ onKey, onEnter, onBackspace, letterStatus }: 
     }
 
     return (
-        <div className="flex flex-col gap-2 items-center pt-4 pb-6">
+        <div className="w-full max-w-md flex flex-col gap-1.5 sm:gap-2 items-center px-1 select-none">
             {ROWS.map((row, i) => (
-                <div key={i} className="flex gap-1.5 justify-center">
+                <div key={i} className="w-full flex gap-1 sm:gap-1.5 justify-center">
                     {row.map((key) => {
                         const isWide = key === "ENTER" || key === "BACK"
                         const status = key.length === 1 ? letterStatus[key] : undefined
                         return (
                             <button
                                 key={key}
+                                type="button"
                                 onClick={() => handleClick(key)}
                                 className={cn(
-                                    "rounded-md font-bold text-sm sm:text-base border-2 hover:scale-105 transition-transform",
-                                    isWide ? "px-3 sm:px-4 py-3 sm:py-4" : "w-9 h-12 sm:w-11 sm:h-14",
+                                    "h-12 sm:h-14 rounded-md font-bold uppercase border-2 active:scale-95 transition-transform",
+                                    isWide
+                                        ? "flex-[1.5] text-xs sm:text-sm px-1"
+                                        : "flex-1 text-base sm:text-lg",
                                     statusClass(status)
                                 )}
                             >

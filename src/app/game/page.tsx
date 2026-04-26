@@ -1,16 +1,15 @@
 'use client'
-import ConfirmationModal from "@/components/ConfirmationModal";
 import GameGrid from "@/components/GameGrid";
 import Header from "@/components/Header";
 
 
-export default function Home() {
+export default function Game() {
     return (
-        <div className="w-screen min-h-screen bg-landingColor">
+        <div className="min-h-screen bg-landingColor flex flex-col">
             <Header inHome={false} />
-            <div className="flex justify-center items-center">
-            <GameGrid />
-            </div>
+            <main className="flex-1 flex justify-center items-start sm:items-center pt-4">
+                <GameGrid />
+            </main>
         </div>
     )
 }
