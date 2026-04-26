@@ -1,21 +1,61 @@
 import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import Papa from "papaparse"
+import Keyboard from "./Keyboard"
+
+const emptyCorrects = () => Array.from({ length: 6 }, () => [-1, -1, -1, -1, -1])
+const emptyWords = () => ["", "", "", "", "", ""]
 
 export default function GameGrid() {
 
-    const [word, setWord] = useState("WHENS")
+    const [word, setWord] = useState("")
+    const [wordList, setWordList] = useState<string[]>([])
 
     let compareWord = Array.from(word)
-    
+
     const [inputWord, setInputWord] = useState("")
     const [compareInput, setCompareInput] = useState(Array.from(inputWord))
     const [numberWord, setNumberWord] = useState(0)
-    const [corrects, setCorrects] = useState([[-1, -1 , -1, -1, -1], [-1, -1 , -1, -1, -1], [-1, -1 , -1, -1, -1], [-1, -1 , -1, -1, -1], [-1, -1 , -1, -1, -1], [-1, -1 , -1, -1, -1]])
-    const [words, setWords] = useState(["","","","","",""])
+    const [corrects, setCorrects] = useState<number[][]>(emptyCorrects())
+    const [words, setWords] = useState<string[]>(emptyWords())
     const [lose, setLose] = useState(false)
     const [win, setWin] = useState(false)
+    const inputRef = useRef<HTMLInputElement>(null)
+
+    useEffect(() => {
+        fetch('/FreqWords.csv')
+            .then((res) => res.text())
+            .then((csv) => {
+                const parsed = Papa.parse<string[]>(csv, { skipEmptyLines: true })
+                const list = parsed.data
+                    .slice(1)
+                    .map((row) => (Array.isArray(row) ? row[0] : row))
+                    .filter((w): w is string => typeof w === 'string' && w.length === 5)
+                    .map((w) => w.toUpperCase())
+                setWordList(list)
+                if (list.length > 0) {
+                    setWord(list[Math.floor(Math.random() * list.length)])
+                }
+            })
+            .catch(() => {
+                setWord("WHENS")
+            })
+    }, [])
+
+    const resetGame = () => {
+        setCorrects(emptyCorrects())
+        setWords(emptyWords())
+        setInputWord("")
+        setCompareInput([])
+        setNumberWord(0)
+        setLose(false)
+        setWin(false)
+        if (wordList.length > 0) {
+            setWord(wordList[Math.floor(Math.random() * wordList.length)])
+        }
+        setTimeout(() => inputRef.current?.focus(), 0)
+    }
 
     const classname_div_grid = "2xl:w-20 2xl:h-20 w-14 h-14 lg:w-16 lg:h-16 flex items-center text-center justify-center rounded-md border-2 border-modalColor text-modalColor"
 
@@ -75,25 +115,52 @@ export default function GameGrid() {
         setLose(corrects[5].includes(2) || corrects[5].includes(1))
         }, [numberWord === 6])
     
+    const submitWord = () => {
+        if (!word || numberWord >= 6) return
+        if (inputWord.length === 5) {
+            verifyWord()
+        } else {
+            alert("The word must have 5 letters")
+            setInputWord("")
+        }
+    }
+
     const handleKeyDown = (ev: any) => {
         if(ev.key === "Enter") {
-            if (inputWord.length === 5 && numberWord < 5) {
-                // Comparar palabras
-                verifyWord()
-            }
-            else if(inputWord.length === 5 && numberWord === 5) {
-                // Comparar palabras y decirle la respuesta correcta en caso de no acertar
-                verifyWord()
-            }
-            else if (numberWord < 6){
-                alert("The word must have 5 letters")
-                setInputWord("")
-            }
+            submitWord()
         }
             else if(ev.key === "Escape") {
             router.push('/')
         }
     }
+
+    const onKeyboardLetter = (letter: string) => {
+        if (numberWord >= 6) return
+        setInputWord((prev) => (prev.length >= 5 ? prev : prev + letter))
+        inputRef.current?.focus()
+    }
+
+    const onKeyboardBackspace = () => {
+        if (numberWord >= 6) return
+        setInputWord((prev) => prev.slice(0, -1))
+        inputRef.current?.focus()
+    }
+
+    const letterStatus = useMemo(() => {
+        const status: Record<string, number> = {}
+        for (let r = 0; r < numberWord; r++) {
+            const guess = words[r]
+            if (!guess) continue
+            for (let i = 0; i < guess.length; i++) {
+                const letter = guess[i].toLocaleUpperCase()
+                const c = corrects[r][i]
+                if (c < 0) continue
+                const prev = status[letter]
+                if (prev === undefined || c < prev) status[letter] = c
+            }
+        }
+        return status
+    }, [words, corrects, numberWord])
 
     useEffect(() => {
         if (numberWord < 6) {
@@ -122,7 +189,7 @@ export default function GameGrid() {
 
     return (
         <div className="grid gap-2 items-center justify-center 2xl:pt-10 pb-5 sm:pt-5">
-            <input  type="text" value={inputWord} autoFocus onKeyDown={handleKeyDown} onChange={(ev: any) => inputChange(ev.target.value)} className="w-full h-full absolute opacity-0 left-0 top-0 cursor-default"></input>
+            <input  ref={inputRef} type="text" value={inputWord} autoFocus onKeyDown={handleKeyDown} onChange={(ev: any) => inputChange(ev.target.value)} className="w-full h-full absolute opacity-0 left-0 top-0 cursor-default"></input>
             {Array.isArray(words) ? words.map((word, index) => 
             <div key={index + 1} className="grid grid-cols-5 gap-2 grid-flow-row">
                 <div className="">
@@ -146,13 +213,24 @@ export default function GameGrid() {
                 {/* </div> */}
             </div>
             ) : ""}
-            {lose ? <div className="flex justify-center items-center">
-                <h5 className="text-white">Answer: {word}</h5>
+            {lose ? <div className="flex flex-col gap-2 justify-center items-center pt-3">
+                <h5 className="text-white text-2xl">You lose! The word was: <span className="font-bold">{word}</span></h5>
             </div>: ""}
-            {win ? <div className="flex justify-center items-center">
-                <h5 className="text-white">You win!</h5>
+            {win ? <div className="flex flex-col gap-2 justify-center items-center pt-3">
+                <h5 className="text-white text-2xl">You win!</h5>
                 </div>: ""}
+            {(lose || win) ? <div className="flex justify-center items-center pt-2">
+                <button onClick={resetGame} className="bg-greenBtn px-6 py-2 rounded-[15px] text-2xl text-zinc-800 font-black shadow hover:scale-105">
+                    Play again
+                </button>
+            </div> : ""}
+            <Keyboard
+                onKey={onKeyboardLetter}
+                onEnter={submitWord}
+                onBackspace={onKeyboardBackspace}
+                letterStatus={letterStatus}
+            />
         </div>
-    
+
     )
 }
